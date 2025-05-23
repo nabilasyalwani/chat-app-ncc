@@ -34,9 +34,9 @@ npm install
 
 **Deno**
 
-Deno adalah javascript runtime untuk membuat sebuah web tetapi dengan keamanan yang lebih baik dibandingkan Node serta dependency-nya bisa diakses secara online sehingga tidak perlu menglola `package.lock.json`
+`Deno` adalah javascript runtime untuk membuat sebuah web tetapi dengan keamanan yang lebih baik dibandingkan `Node.js` serta dependency-nya bisa diakses secara online sehingga tidak perlu menglola `package.lock.json`
 
-Langkah pertama, melakukan instalisasi Deno pada perangkat:
+Langkah pertama, melakukan instalisasi `Deno` pada perangkat:
 ```
 irm https://deno.land/install.ps1 | iex
 ```
@@ -146,7 +146,7 @@ constructor() {
 
 **Handle Connection**
 
-Fungsi ini menangani koneksi websocket baru, memvalidasi user, melakukan setup event handler, memasukkan user ke public room, dan menyimpan socket ke server.
+Fungsi ini menangani koneksi websocket baru, melakukan validasi user, melakukan setup event handler, memasukkan user ke public room, dan menyimpan socket ke server.
 ```
 public async handleConnection(ctx: Context) {
   console.log("Upgrading to WebSocket...");
@@ -504,7 +504,7 @@ private broadcastToRoom(roomId: number, message: AppEvent) {
 - `Polling.vue`: form untuk membaut polling baru (pertanyaan, jawaban, durasi).
 - `RoomList.vue`: komponen untuk menampilkan daftar room, terdiri atas beberapa komponen roomcard.
 - `RoomCard.vue`: komponen untuk setiap room.
-- `RoomDetail.vue`: komponen untuk menampilkan detail room, termasuk nama room dan user/members.
+- `RoomDetail.vue`: komponen untuk menampilkan detail room, termasuk nama room dan users/members.
 - `User.vue`: komponen untuk setiap user.
 - `UserCard.vue`: komponen untuk menampilkan informasi mengenai client (user).
 - `Header.vue`: komponen untuk header aplikasi chat yang memuat logo dan icon switch mode.
@@ -762,7 +762,7 @@ function getDurationText(pollId) {
 - `submitPassword`: mengirim password private room.
 - `sendMessage`: mengirim pesan chat ke server.
 - `chooseAnswer`: mengirim vote polling ke server, hanya jika belum vote & waktu masih ada.
-- `getDurationText`: menghitung dan tampilkan sisa waktu polling secara dinamis.
+- `getDurationText`: menghitung dan menampilkan sisa waktu polling secara real-time.
 
 **OuMounted**
 
