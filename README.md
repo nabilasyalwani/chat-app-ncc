@@ -2,8 +2,8 @@
 
 Implementasi websocket pada aplikasi chat berbasis website menggunakan `Deno` dan `Vue` sebagai final project open recruitment admin NCC 2025. 
 
-# Setting Project
-## Front End
+## Setting Project
+### Front End
 **Vite + Vue**
 
 Untuk tampilan depan (frontend), digunakan `Vite` dengan framework `Vue.js` untuk mempermudah dan mempercepat pengembangan aplikasi chat. `Vue.js` membagi setiap komponen menjadi tiga bagian utama: template, script, dan style. Template mendefinisikan tampilan komponen, script berisi logika dan data komponen, dan style menentukan gaya CSS komponen.
@@ -30,7 +30,7 @@ npm install
 ```
 
 
-## Back End
+### Back End
 
 **Deno**
 
@@ -48,8 +48,8 @@ deno add jsr:@oak/oak
 ```
 
 
-# Penjelasan Server
-## main.ts
+## Penjelasan Server
+### main.ts
 
 File `main.ts` berfungsi sebagai penyedia endpoint koneksi untuk chat-app dan penghubung antara `ChatServer.ts` dengan client `ChatContent.vue` di komponen frontend.
 
@@ -89,7 +89,7 @@ await app.listen({ hostname: "0.0.0.0", port });
 - Baris ke 14 hingga 26 mengatur izin `CORS (Cross-Origin Resource Sharing)` pada server agar bisa menerima request dari domain mana saja, mengizinkan metode HTTP GET, POST, dan OPTIONS, serta mengizinkan semua header pada request.
 
 
-## ChatServer.ts
+### ChatServer.ts
 
 Pada `ChatServer.ts`, dilakukan pengaturan `handleConnection` untuk client yang connect ke server. File ini juga memuat kode untuk mengelola room, pesan chat, dan polling secara real time. Semua data dikelola di memori server dan dibroadcast ke client sesuai event yang terjadi.
 
@@ -496,7 +496,7 @@ private broadcastToRoom(roomId: number, message: AppEvent) {
 - `BroadcastToRoom`: mengirim pesan/event ke semua user di room tertentu. 
 
 
-# Komponen Front End
+## Komponen Front End
 ![image](https://github.com/user-attachments/assets/ebf3a2f5-a908-43c8-865d-d52ba1e18dc0)
 
 - `App.vue`: komponen root aplikasi chat.
@@ -510,11 +510,11 @@ private broadcastToRoom(roomId: number, message: AppEvent) {
 - `Header.vue`: komponen untuk header aplikasi chat yang memuat logo dan icon switch mode.
 
 
-# Penjelasan Client
+## Penjelasan Client
 
 Fungsi yang menangani client pada aplikasi chat ini berada pada file `ChatContent.vue`.
 
-## ChatContent.vue
+### ChatContent.vue
 
 **Import library dan variabel**
 
@@ -790,7 +790,128 @@ onMounted(() => {
 - Membuat timer agar countdown polling selalu update di tampilan.
 
 
-# Tampilan chat app
+### Socket.js
+
+Mengatur inisialisasi dan akses websocket untuk komunikasi real-time dengan server.
+
+```
+let socket = null;
+
+export function initSocket(username) {
+  const url = new URL(
+    `https://api.greaterwild.shop/start_web_socket?username=${username}`,
+    location.href
+  );
+  url.protocol = url.protocol.replace("https", "wss");
+
+  socket = new WebSocket(url);
+
+  return socket;
+}
+
+export function getSocket() {
+  return socket;
+}
+```
+
+
+## Deployment
+
+Untuk melakukan deployment pada aplikasi chat ini, program akan dibagi menjadi 2 bagian, yakni backend dan frontend. Kemudian, akan dibuat `Dockerfile` image pada masing masing bagian container dan `docker-compose.yml` untuk menjalankan keduanya.
+
+### Backend
+**Dockerfile**
+
+```
+FROM denoland/deno:latest
+
+WORKDIR /app
+
+COPY . .
+
+EXPOSE 8000
+
+CMD ["deno", "tasks", "dev"]
+```
+
+### Frontend
+**Dockerfile**
+
+```
+FROM node:20
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm install
+
+COPY . .
+
+EXPOSE 5173
+
+CMD ["npm", "run", "dev", "--", "--host"]
+```
+
+### Docker Compose
+```
+services:
+  frontend:
+    build: ./frontend
+    restart: always
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    depends_on:
+      - backend
+
+  backend:
+    build: ./backend
+    restart: always
+    ports:
+      - "8000:8000"
+    command: deno run --allow-net main.ts
+    volumes:
+      - ./backend:/app
+
+  nginx:
+    image: nginx:stable
+    restart: always
+    volumes:
+      - ./conf/nginx/http.conf:/etc/nginx/nginx.conf
+      - ./certs/origin.pem:/etc/nginx/ssl/origin.pem:ro
+      - ./certs/origin.key:/etc/nginx/ssl/origin.key:ro
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - backend
+      - frontend
+
+  cache:
+    image: redis:4
+    restart: always
+    volumes:
+      - .data/redis:/data
+    networks:
+      internal:
+
+networks:
+  default:
+  internal:
+    internal: true
+```
+
+- Bagian frontend akan berjalan pada port 5173
+- Bagian backend akan berjalan pada port 8000
+- Bagian nginx akan mengatur lalu lintas HTTP/HTTPS (port 80 dan 443) dan meneruskan request ke frontend dan backend (reverse proxy).
+
+
+
+## Tampilan chat app
 
 ![Screenshot (802)](https://github.com/user-attachments/assets/52d9890f-efc5-4e03-8476-c4c7bee76dca)
 
