@@ -6,7 +6,7 @@ Implementasi websocket pada aplikasi chat berbasis website menggunakan `Deno` da
 ## Front End
 **Vite + Vue**
 
-Untuk tampilan depan (frontend), digunakan vite dengan framework vue untuk mempermudah dan mempercepat pengembangan aplikasi chat.
+Untuk tampilan depan (frontend), digunakan `Vite` dengan framework `Vue.js` untuk mempermudah dan mempercepat pengembangan aplikasi chat. `Vue.js` membagi setiap komponen menjadi tiga bagian utama: template, script, dan style. Template mendefinisikan tampilan komponen, script berisi logika dan data komponen, dan style menentukan gaya CSS komponen.
 
 Adapun command yang digunakan untuk membuat vite adalah berikut:
 
